@@ -169,6 +169,13 @@ def main():
     path = os.path.join(out_dir, "entry.txt")
     with open(path, "w", encoding="utf-8", newline="") as handle:
         handle.write(line)
+    # Read the file back and confirm it is byte-for-byte the line the
+    # tournament picked: the grader reads this file, so a short write or
+    # an encoding surprise must fail here, never silently upstream.
+    with open(path, "r", encoding="utf-8", newline="") as handle:
+        written = handle.read()
+    if written != line:
+        raise ValueError("entry.txt does not match the winning line")
     print("winner (%d chars, score %.2f):" % (len(line), points))
     print(line)
     return 0
